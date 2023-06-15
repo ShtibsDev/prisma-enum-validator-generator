@@ -1,0 +1,25 @@
+{
+  "name": "prisma-enums-validators-generator",
+  "version": "1.0.0",
+  "description": "This will generate utility functions to validate enums in the Prisma schema file.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "Enums",
+    "Typescript",
+    "Prisma"
+  ],
+  "author": "Ofir Stiber Voronzov",
+  "license": "MIT",
+  "devDependencies": {
+    "prisma": "^4.15.0",
+    "typescript": "^5.1.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.15.0",
+    "@prisma/generator-helper": "^4.15.0",
+    "dotenv": "^16.1.4"
+  }
+}

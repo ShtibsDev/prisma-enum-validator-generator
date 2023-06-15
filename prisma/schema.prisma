@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator enumValidator {
+  provider = "node ./dist/index.js"
+  useTs = false
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Colors {RED
+  BLUE
+  GREEN
+}
+
+enum Personalities {
+  GOOD
+  BAD
+}
+
+model Color{
+  id Int @id
+  color Colors
+  personality Personalities
+}
