@@ -3,9 +3,8 @@ import generate from './generate';
 
 generatorHandler({
 	onManifest: () => ({
-		defaultOutput: 'enum-validation.ts',
-		prettyName: 'Enum Validator',
-		requiresGenerators: ['client'],
+		defaultOutput: 'enums-validators.ts',
+		prettyName: 'Enums Validators',
 	}),
 	onGenerate: generate,
 });
