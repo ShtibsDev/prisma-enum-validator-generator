@@ -7,12 +7,16 @@ generator client {
 
 generator enumValidator {
   provider = "node ./dist/index.js"
-  useTs = false
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Numbers {
+  ONE 
+  TWO
 }
 
 enum Colors {RED
@@ -26,7 +30,7 @@ enum Personalities {
 }
 
 model Color{
-  id Int @id
+  id Int @id 
   color Colors
   personality Personalities
 }
