@@ -27,19 +27,21 @@ function parseEnums(dataModel: string) {
 			return name;
 		}) ?? [];
 
-	console.log('All enums', enums);
-
 	const enumUsage: any = {};
 	enums.forEach((e) => (enumUsage[e] = 0));
+
+	const ignoreTokens = ['@@', '//'];
 
 	for (const modelString of modelStrings ?? []) {
 		const fieldsString = modelString.substring(modelString.indexOf('{')).replace('{', '').replace('}', '').trim();
 		const fields = fieldsString
 			.split('\n')
 			.map((f) => f.trim())
-			.filter((f) => !f.startsWith('@@'));
+			.filter((f) => f && !ignoreTokens.some((it) => f.startsWith(it)));
 		for (const field of fields) {
-			const fieldType = field.split(/\s/)[1] ?? null;
+			const tokens = field.split(/\s/).filter(Boolean);
+
+			const fieldType = tokens[1] ?? null;
 
 			if (!fieldType) continue;
 
@@ -84,7 +86,6 @@ export default async (options: GeneratorOptions) => {
 
 		const output = options.generator.output?.value || `./prisma/enum-validators.${isTs ? 'ts' : 'js'}`;
 		const enums = parseEnums(options.datamodel);
-		console.log('filtered', enums);
 
 		const fileContent = generateFileContent(enums, isTs);
 
