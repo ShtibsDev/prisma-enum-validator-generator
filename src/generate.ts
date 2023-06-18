@@ -10,43 +10,66 @@ type SchemaEnum = {
 };
 
 const enumRegex = /enum [\s\S]*?\}/g;
+const modelRegex = /model [\s\S]*?\}/g;
 const curlyBracesRegex = /\{([^{}]+)\}/g;
 
 function parseEnums(dataModel: string) {
 	const enumStrings = dataModel.match(enumRegex);
+	const modelStrings = dataModel.match(modelRegex);
 
-	const enums: SchemaEnum[] =
+	const enums: string[] =
 		enumStrings?.map((enumString) => {
 			const name = enumString.split(' ')[1];
 
-			const valueString = enumString.substring(enumString.indexOf('{')).replace('{', '').replace('}', '').trim();
+			// const valueString = enumString.substring(enumString.indexOf('{')).replace('{', '').replace('}', '').trim();
+			// const values = valueString.split(/\s/).filter(Boolean);
 
-			const values = valueString.split(/\s/).filter(Boolean);
-
-			return { name, values };
+			return name;
 		}) ?? [];
 
-	return enums;
+	console.log('All enums', enums);
+
+	const enumUsage: any = {};
+	enums.forEach((e) => (enumUsage[e] = 0));
+
+	for (const modelString of modelStrings ?? []) {
+		const fieldsString = modelString.substring(modelString.indexOf('{')).replace('{', '').replace('}', '').trim();
+		const fields = fieldsString
+			.split('\n')
+			.map((f) => f.trim())
+			.filter((f) => !f.startsWith('@@'));
+		for (const field of fields) {
+			const fieldType = field.split(/\s/)[1] ?? null;
+
+			if (!fieldType) continue;
+
+			if (enums.includes(fieldType)) {
+				enumUsage[fieldType]++;
+			}
+		}
+	}
+
+	return enums.filter((e) => enumUsage[e] > 0);
 }
 
-function generateFileContent(enums: SchemaEnum[], isTs = true) {
+function generateFileContent(enums: string[], isTs = true) {
 	return `
   // This file was generated from your schema.prisma file.
   // Any changes made to this file will be overridden by the nex generate command.
   
-  import { ${enums.map((e) => e.name).join(', ')} } from '@prisma/client';
+  import { ${enums.join(', ')} } from '@prisma/client';
 
   ${enums
 		.map(
-			(e) => `
+			(enumName) => `
   /**
-   * A function to validate if a string is of type {@link ${e.name}}.
+   * A function to validate if a string is of type {@link ${enumName}}.
    * @param {string | null | undefined} value The value to test.
-   * @returns {boolean} \`true\` if {@link value} is of type {@link ${e.name}}. Otherwise \`false\`. 
+   * @returns {boolean} \`true\` if {@link value} is of type {@link ${enumName}}. Otherwise \`false\`. 
    */
-  export function is${e.name} (value${isTs ? `: string | null | undefined): value is ${e.name}` : ')'} {
+  export function is${enumName} (value${isTs ? `: string | null | undefined): value is ${enumName}` : ')'} {
   \tif(!value) return false;
-  \treturn Object.values(${e.name}).includes(value${isTs ? ` as ${e.name}` : ''});
+  \treturn Object.values(${enumName}).includes(value${isTs ? ` as ${enumName}` : ''});
   }`
 		)
 		.join('\n')}
@@ -56,16 +79,14 @@ function generateFileContent(enums: SchemaEnum[], isTs = true) {
 export default async (options: GeneratorOptions) => {
 	try {
 		const config = options.generator.config;
-		console.log(config);
 
 		const isTs = !!config.useTs ? config.useTs === 'true' : true;
-		console.log(isTs);
 
 		const output = options.generator.output?.value || `./prisma/enum-validators.${isTs ? 'ts' : 'js'}`;
 		const enums = parseEnums(options.datamodel);
+		console.log('filtered', enums);
 
 		const fileContent = generateFileContent(enums, isTs);
-		console.log(output);
 
 		fs.writeFileSync(output, fileContent);
 	} catch (error) {
