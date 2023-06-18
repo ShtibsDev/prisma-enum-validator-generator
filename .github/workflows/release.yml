@@ -9,22 +9,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       # Setup .npmrc file to publish to npm
-#       - name: Set up .npmrc
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: '16.x'
+      #       - name: Set up .npmrc
+      #         uses: actions/setup-node@v3
+      #         with:
+      #           node-version: '16.x'
       - name: Install dependecies
         run: |
           if [ -e package-lock.json ]; then
           npm ci
           else
           npm i
-          fi        
+          fi
+
+      - name: Build
+        run: npm run build
+
       - name: Publish
         uses: JS-DevTools/npm-publish@v2.2.0
         with:
           token: ${{ secrets.NPM_TOKEN }}
-        
-#         run: npm publish
-#         env:
-#           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACTIONS_TOKEN }}
