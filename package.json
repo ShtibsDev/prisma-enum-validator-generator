@@ -14,9 +14,10 @@
     "test": "test"
   },
   "keywords": [
-    "Enums",
+    "Enum",
     "Typescript",
-    "Prisma"
+    "Prisma",
+    "Generator"
   ],
   "author": "Ofir Stiber Voronzov",
   "repository": {
@@ -25,11 +26,11 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "prisma": "^4.15.0",
+    "prisma": "^4.16.2",
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@prisma/client": "^4.15.0",
+    "@prisma/client": "^4.16.2",
     "@prisma/generator-helper": "^4.16.2",
     "dotenv": "^16.3.1"
   }

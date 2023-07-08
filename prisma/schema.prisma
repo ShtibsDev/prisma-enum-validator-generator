@@ -19,7 +19,8 @@ enum Numbers {
   TWO
 }
 
-enum Colors {RED
+enum Colors {
+  RED
   BLUE
   GREEN
 }
