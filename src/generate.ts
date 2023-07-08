@@ -1,53 +1,15 @@
-import { GeneratorOptions } from '@prisma/generator-helper';
-import path from 'path';
+import { DMMF, GeneratorOptions } from '@prisma/generator-helper';
 import fs from 'fs';
-import * as child_process from 'child_process';
-import os from 'os';
 
-type SchemaEnum = {
-	name: string;
-	values: string[];
-};
+function extractEnums(dataModel: DMMF.Datamodel): string[] {
+	const enums = dataModel.enums.map((e) => e.name);
 
-const enumRegex = /enum [\s\S]*?\}/g;
-const modelRegex = /model [\s\S]*?\}/g;
-const curlyBracesRegex = /\{([^{}]+)\}/g;
-
-function parseEnums(dataModel: string) {
-	const enumStrings = dataModel.match(enumRegex);
-	const modelStrings = dataModel.match(modelRegex);
-
-	const enums: string[] =
-		enumStrings?.map((enumString) => {
-			const name = enumString.split(' ')[1];
-
-			// const valueString = enumString.substring(enumString.indexOf('{')).replace('{', '').replace('}', '').trim();
-			// const values = valueString.split(/\s/).filter(Boolean);
-
-			return name;
-		}) ?? [];
-
-	const enumUsage: any = {};
+	const enumUsage: Record<string, number> = {};
 	enums.forEach((e) => (enumUsage[e] = 0));
 
-	const ignoreTokens = ['@@', '//'];
-
-	for (const modelString of modelStrings ?? []) {
-		const fieldsString = modelString.substring(modelString.indexOf('{')).replace('{', '').replace('}', '').trim();
-		const fields = fieldsString
-			.split('\n')
-			.map((f) => f.trim())
-			.filter((f) => f && !ignoreTokens.some((it) => f.startsWith(it)));
-		for (const field of fields) {
-			const tokens = field.split(/\s/).filter(Boolean);
-
-			const fieldType = tokens[1] ?? null;
-
-			if (!fieldType) continue;
-
-			if (enums.includes(fieldType)) {
-				enumUsage[fieldType]++;
-			}
+	for (const model of dataModel.models) {
+		for (const field of model.fields) {
+			if (enums.includes(field.type)) enumUsage[field.type]++;
 		}
 	}
 
@@ -84,9 +46,13 @@ export default async (options: GeneratorOptions) => {
 
 		const isTs = !!config.useTs ? config.useTs === 'true' : true;
 
-		const output = options.generator.output?.value || `./prisma/enum-validators.${isTs ? 'ts' : 'js'}`;
-		const enums = parseEnums(options.datamodel);
+		let output = options.generator.output?.value || `./prisma/enum-validators.${isTs ? 'ts' : 'js'}`;
 
+		if (!isTs && !output.endsWith('.js')) {
+			output = `${output.substring(0, output.lastIndexOf('.'))}.js`;
+		}
+
+		const enums = extractEnums(options.dmmf.datamodel);
 		const fileContent = generateFileContent(enums, isTs);
 
 		fs.writeFileSync(output, fileContent);
