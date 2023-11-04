@@ -1,6 +1,6 @@
 {
   "name": "prisma-enum-validator-generator",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "This will generate utility functions to validate enums in the Prisma schema file.",
   "main": "./dist/index.js",
   "bin": "./dist/index.js",
