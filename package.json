@@ -26,12 +26,12 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "prisma": "^5.6.0",
-    "typescript": "^5.3.2"
+    "prisma": "^5.7.0",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@prisma/client": "^5.5.2",
-    "@prisma/generator-helper": "^5.5.2",
+    "@prisma/client": "^5.7.0",
+    "@prisma/generator-helper": "^5.7.0",
     "dotenv": "^16.3.1"
   }
 }
