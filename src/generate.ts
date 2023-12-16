@@ -1,5 +1,5 @@
 import { DMMF, GeneratorOptions } from '@prisma/generator-helper';
-import fs from 'fs';
+import { writeFile } from 'fs/promises';
 
 function extractEnums(dataModel: DMMF.Datamodel): string[] {
 	const enums = dataModel.enums.map((e) => e.name);
@@ -55,7 +55,7 @@ export default async (options: GeneratorOptions) => {
 		const enums = extractEnums(options.dmmf.datamodel);
 		const fileContent = generateFileContent(enums, isTs);
 
-		fs.writeFileSync(output, fileContent);
+		await writeFile(output, fileContent);
 	} catch (error) {
 		console.error(error);
 		throw error;
