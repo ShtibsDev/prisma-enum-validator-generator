@@ -27,11 +27,11 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.10.6",
-    "prisma": "^5.7.0",
+    "prisma": "^5.7.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.0",
+    "@prisma/client": "^5.7.1",
     "@prisma/generator-helper": "^5.7.0",
     "dotenv": "^16.3.1"
   }
