@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
-    "@prisma/generator-helper": "^5.7.0",
+    "@prisma/generator-helper": "^5.7.1",
     "dotenv": "^16.3.1"
   }
 }
