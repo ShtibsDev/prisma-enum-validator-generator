@@ -27,7 +27,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.10.6",
-    "prisma": "^5.7.1",
+    "prisma": "^5.10.2",
     "typescript": "^5.3.3"
   },
   "dependencies": {
